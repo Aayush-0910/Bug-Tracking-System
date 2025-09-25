@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Bug {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  status      Status    @default(OPEN)
+  priority    Priority  @default(MEDIUM)
+  dueDate     DateTime? // New field
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  developer   Developer? @relation(fields: [developerId], references: [id])
+  developerId Int?
+}
+
+model Developer {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  email String  @unique
+  bugs  Bug[]
+}
+
+enum Status {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
